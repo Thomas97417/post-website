@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation"
 
 const Navbar = () => {
   const listLinks = [
-    { name: "Home", path: "/", icon: Home },
+    { name: "Home", path: "/home", icon: Home },
     { name: "Search", path: "/search", icon: Search },
     { name: "Write", path: "/write", icon: NotebookPen} ,
     { name: "Like", path: "/like", icon: Heart },

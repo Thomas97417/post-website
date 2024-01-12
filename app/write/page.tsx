@@ -4,13 +4,33 @@ import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { CharactersCounter, CharactersTextArea, TextProvider } from '@/components/CharactersCounter'
 
+import {db } from "@/db"
+import { posts } from "@/db/schema"
+import { redirect } from 'next/navigation'
+import { v4 as uuidv4 } from 'uuid';
+
 const PostsPage = async () => {
   const session = await auth()
-  
+
+  async function handleSubmit(formData: FormData) {
+    "use server"
+    if(!session?.user) return
+    const content = formData.get('content') as string
+    const id = uuidv4()
+    console.log("create a new posts : ", content)
+    const result = await db.insert(posts).values({
+      id: id,
+      content: content,
+      userId: session?.user.id || 'null',
+    }).returning()
+
+    redirect('/me')
+  }
+
   return (
-    <div className='min-h-screen flex flex-col gap-y-4'>
+    <form action={handleSubmit} className='min-h-screen flex flex-col gap-y-4 mt-4'>
       <TextProvider>
-        <div className='w-full border rounded-lg flex flex-col gap-y-2 p-2 mt-4'>
+        <div className='w-full border rounded-lg flex flex-col gap-y-2 p-4 mt-4'>
           <div className='flex flex-row h-[120px] gap-x-2 w-full'>
             <Image
               src={session?.user?.image || '/nextjs.svg'}
@@ -26,11 +46,11 @@ const PostsPage = async () => {
           </div>
           <div className='flex flex-row justify-between items-center'>
             <CharactersCounter />
-            <Button variant='ghost' className='border'>Post</Button>
+            <Button type='submit' variant='ghost' className='border'>Post</Button>
           </div>
         </div>
       </TextProvider>
-    </div>
+    </form>
   )
 }
 

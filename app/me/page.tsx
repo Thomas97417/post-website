@@ -25,7 +25,7 @@ const Profil = async () => {
       </div>
 
       <div className='mt-8'>
-        <Posts />
+        <Posts location={"me"} />
       </div>
     </main>
   )

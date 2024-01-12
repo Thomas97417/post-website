@@ -56,3 +56,13 @@ export const verificationTokens = pgTable(
    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
  })
 )
+
+export const posts = pgTable("post", {
+  id: text("id").notNull().primaryKey(),
+  userId: text("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  content: text("content").notNull(),
+  createdAt: timestamp("createdAt", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt", { withTimezone: true }).notNull().defaultNow(),
+  likeCounter: integer("likeCounter").default(0),
+  rePostCounter: integer("rePostCounter").default(0),
+});

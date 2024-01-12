@@ -38,6 +38,7 @@ export const CharactersTextArea = () => {
         className='bg-transparent focus:outline-none w-full resize-none h-2/3 text-sm text-gray-400'
         value={text}
         onChange={handleInputChange}
+        name='content'
       />
     </>
   );

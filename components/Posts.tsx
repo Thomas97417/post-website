@@ -1,11 +1,12 @@
 import React from 'react'
 
 import {db } from "@/db"
-import { posts, users } from "@/db/schema"
+import { likes, posts, users } from "@/db/schema"
 import { auth } from '@/app/(auth)/auth'
-import { eq } from 'drizzle-orm';
+import { eq, desc } from 'drizzle-orm';
 import Image from 'next/image';
-import { Heart, Repeat2 } from 'lucide-react';
+import { Repeat2 } from 'lucide-react';
+import LikeButton from './LikeButton';
 
 type allPosts = {
   id: string;
@@ -21,11 +22,16 @@ const Posts = async ({location}: {location: string}) => {
 
   const session = await auth()
   let allPosts: allPosts[] = []
+  let likedPosts
   if(location === "me") {
     allPosts = await db.select().from(posts).where(eq(posts.userId, session?.user.id || ''))
   }
   if(location === "home") {
     allPosts = await db.select().from(posts).limit(10).orderBy(posts.createdAt)
+  }
+  if(location === "like") {
+    likedPosts = await db.select().from(likes).where(eq(likes.userId, session?.user.id || ''))
+    console.log("liked posts : ", likedPosts)
   }
   
   const infoCreatorPromises = allPosts.map((post) => {
@@ -52,7 +58,7 @@ const Posts = async ({location}: {location: string}) => {
             </div>
             <div className='flex flex-row gap-x-2'>
               <div className='flex flex-row gap-x-2'>
-                <Heart className='text-gray-400' />
+                <LikeButton user={session?.user.id as string} post={post.id}/>
                 <h1 className='text-gray-400'>{post.likeCounter}</h1>
               </div>
               <div className='flex gap-x-2 ml-4'>
